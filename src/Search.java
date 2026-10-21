@@ -5,8 +5,22 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 import java.util.Set;
+import java.util.Map;
+import java.util.HashMap;
 
 public class Search {
+
+    public static void main(String[] args) {
+        char[][] grid = {
+            {'o', 'o', 'o', 'o', 'c', 'w', 'c', 'o'},
+            {'w', 'o', 'o', 'w', 'w', 'c', 'w', 'o'},
+            {'o', 'o', 'o', 'o', 'R', 'w', 'o', 'o'},
+            {'o', 'o', 'w', 'w', 'w', 'o', 'o', 'o'},
+            {'o', 'o', 'o', 'o', 'c', 'o', 'o', 'o'}
+        };
+
+
+    }
      /**
      * Finds the location of the nearest reachable cheese from the rat's position.
      * Returns a 2-element int array: [row, col] of the closest 'c'. If there are multiple
@@ -50,6 +64,40 @@ public class Search {
             if (maze[current.row()][current.column()] == 'c') return new int[] {current.row(), current.column()};
 
             for (Location spot : possibleMoves(maze,current)) if (!visitedLocations.contains(spot)) q.offer(spot);
+        }
+
+        throw new HungryRatException();
+    }
+
+    
+    public static List<Location> pathToNearestCheese(char[][] maze) throws EscapedRatException, CrowdedMazeException, HungryRatException {
+        Location start = ratLocation(maze);
+        Set<Location> visitedLocations = new HashSet<>();
+        Queue<Location> q = new ArrayDeque<>();
+
+        Map<Location, Location> previous = new HashMap<>();
+
+        q.offer(start);
+
+        while(!q.isEmpty()) {
+            Location current = q.remove();
+            visitedLocations.add(current);
+            
+            if (maze[current.row()][current.column()] == 'c') {
+                List<Location> path = new LinkedList<>();
+                Location step = current;
+                while (step != null) {
+                    path.addFirst(step);
+                    step = previous.get(step);
+                }
+                // Return path
+                // return new int[] {current.row(), current.column()};
+            } 
+
+            for (Location spot : possibleMoves(maze,current)) if (!visitedLocations.contains(spot)) {
+                previous.put(spot, current);
+                q.offer(spot);
+            }
         }
 
         throw new HungryRatException();
